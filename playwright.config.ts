@@ -2,7 +2,6 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load .env variables
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
@@ -16,9 +15,27 @@ export default defineConfig({
   },
   projects: [
     {
+      name: 'auth-setup',
+      testDir: './tests/ui',
+      testMatch: /.*auth\.setup\.ts/,
+    },
+    {
       name: 'ui-chromium',
       testDir: './tests/ui',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'auth.json',
+      },
+      dependencies: ['auth-setup'],
+    },
+    {
+      name: 'ui-firefox',
+      testDir: './tests/ui',
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: 'auth.json',
+      },
+      dependencies: ['auth-setup'],
     },
     {
       name: 'api-tests',
