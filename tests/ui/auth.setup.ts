@@ -11,6 +11,6 @@ setup('authenticate', async({page})=>{
     await login.login(username, password);
     
     await page.waitForURL(orgUrl);
-    await page.context().storageState({path: 'auth.json'})
+    await page.context().storageState({path: 'auth.json'});
 
-})
+});

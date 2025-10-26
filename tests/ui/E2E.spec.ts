@@ -6,6 +6,13 @@ test.describe('Create Map Builder Test', () => {
     const workflow = new WorkflowPage(page);
     await workflow.open();
     await workflow.openNewWorkflow();
-    console.log("FINISHED TEST");
+    await workflow.openDataBaseList();
+    await workflow.openDataBase('demo data');
+    await workflow.openDataBaseSchema('demo_tables');
+    await workflow.selectAnduseDataset('retail_stores');
+    //await workflow.selectAnduseDataset('retail_stores');
+
+    console.log('FINISHED TEST');
+
   });
 });

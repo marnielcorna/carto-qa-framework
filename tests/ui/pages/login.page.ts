@@ -1,5 +1,5 @@
-import { Locator, Page, expect } from "@playwright/test";
-import { BasePage } from "./Base.page";
+import { Locator, Page } from '@playwright/test';
+import { BasePage } from './Base.page';
 
 export class LoginPage extends BasePage{
     readonly usernameInput: Locator;
@@ -9,9 +9,9 @@ export class LoginPage extends BasePage{
 
     constructor(page: Page){
         super(page);
-        this.usernameInput = page.locator('//*[@id="username"]')
-        this.passwordInput = page.locator('//*[@id="password"]')
-        this.submitButton = page.locator('//button[contains(text(), "Continue")]')
+        this.usernameInput = page.locator('//*[@id="username"]');
+        this.passwordInput = page.locator('//*[@id="password"]');
+        this.submitButton = page.locator('//button[contains(text(), "Continue")]');
         this.orgUrl = process.env.CARTO_BASE_URL || '';
     }
 
