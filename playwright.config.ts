@@ -10,7 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [['html', { outputFolder: 'playwright-report' }]],
   use: {
-    baseURL: process.env.UI_BASE_URL,
+    baseURL: process.env.CARTO_BASE_URL,
     trace: 'on-first-retry',
   },
   projects: [

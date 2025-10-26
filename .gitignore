@@ -1,5 +1,8 @@
 .env
 
+# Auth session
+/auth.json
+
 # Playwright
 node_modules/
 /test-results/
