@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "id": "WF-001",
-    "name": "Create Builder Map",
-    "description": "Combines 2 datasets, filters, and generates a Builder Map output.",
+    "id": "TC002",
+    "name": "Update Builder Map",
+    "description": "Create a map and later update it correctly",
     "priority": "high",
-    "tags": ["ui", "regression", "smoke"]
+    "tags": ["ui", "create", "regression"]
   },
   "context": {
     "database": "demo data",
@@ -23,5 +23,9 @@
     { "type": "component", "from": "Spatial Match", "to": "Simple Filter" },
     { "type": "component", "from": "Simple Filter", "to": "Create Builder Map" }
   ],
-  "validations": []
+  "validations": [
+    { "type": "elementVisible", "expected": ""},
+    { "type": "textContains", "expected": "" }
+]
+
 }

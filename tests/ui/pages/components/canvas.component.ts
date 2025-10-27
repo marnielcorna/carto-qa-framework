@@ -89,10 +89,7 @@ export class CanvasComponent {
 
     await this.page.mouse.move(outBox.x + outBox.width / 2, outBox.y + outBox.height / 2);
     await this.page.mouse.down();
-    await this.page.mouse.move(inBox.x + inBox.width / 2, inBox.y + inBox.height / 2, { steps: 25 });
-    await this.page.waitForTimeout(200);
+    await this.page.mouse.move(inBox.x + inBox.width / 2, inBox.y + inBox.height / 2, { steps: 10 });
     await this.page.mouse.up();
-
-    console.log(`Linked ${fromBox} → ${toBox}`);
   }
 }

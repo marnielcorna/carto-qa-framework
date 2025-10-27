@@ -24,11 +24,14 @@ export interface WorkflowScenario {
     to: string;
     targetHandle: string;
   }[];
-  validations?: any[];
+  validations?: {
+    type: string,
+    expected: string;
+  }[];
 }
 
-export function loadWorkflowScenarios(): WorkflowScenario[] {
-  const scenariosDir = path.join(__dirname, '../data');
+export function loadWorkflowScenarios(suite: string ): WorkflowScenario[] {
+  const scenariosDir = path.join(__dirname, `../data/${suite}`);
   const files = fs.readdirSync(scenariosDir).filter(f => f.endsWith('.json'));
 
   return files.map(file => {

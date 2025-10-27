@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "id": "WF-002",
+    "name": "Update Builder Map",
+    "description": "Create a map and later correctly update it",
+    "priority": "high",
+    "tags": ["ui", "smoke"]
+  },
+  "context": {
+    "database": "demo data",
+    "schema": "demo_tables"
+  },
+  "nodes": [],
+  "connections": [],
+  "validations": []
+
+}

@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "id": "TC001",
+    "name": "Create Builder Map",
+    "description": "Combines 2 datasets, filters, and generates a Builder Map output.",
+    "priority": "high",
+    "tags": ["ui", "create", "regression"]
+  },
+  "context": {
+    "database": "demo data",
+    "schema": "demo_tables"
+  },
+  "nodes": [
+    { "type": "source", "name": "retail_stores", "quadrant": 1 },
+    { "type": "source", "name": "usa_states_boundaries", "quadrant": 11 },
+    { "type": "component", "name": "Spatial Match", "quadrant": 6 },
+    { "type": "component", "name": "Simple Filter", "quadrant": 8 },
+    { "type": "component", "name": "Create Builder Map", "quadrant": 10 }
+  ],
+  "connections": [
+    { "type": "source", "from": "retail_stores", "to": "Spatial Match", "targetHandle": "input-0" },
+    { "type": "source", "from": "usa_states_boundaries", "to": "Spatial Match", "targetHandle": "input-1" },
+    { "type": "component", "from": "Spatial Match", "to": "Simple Filter" },
+    { "type": "component", "from": "Simple Filter", "to": "Create Builder Map" }
+  ],
+  "validations": [
+    { "type": "elementVisible", "expected": ""},
+    { "type": "textContains", "expected": "" },
+    { "type": "correctMapId", "expected": "" }
+]
+}

@@ -96,15 +96,38 @@ export class WorkflowPage extends BasePage {
   }
   
   async deleteLastMap(){
-    await super.open('/workflows')
+    await super.open('/workflows');
     await super.safeClick(this.untitledWorkflowMenu);
     await super.safeClick(this.untitledWorkflowMenuOptionDelete);
     await super.waitUntilVisible(this.deleteConfirmationPopUp);
     await super.safeClick(this.deleteConfirmationPopUpButtonYes);
   }
 
-  async testdos(){
-    await super.waitUntilVisible2(this.createNewOptionInDropdown);
+  async validateScenarioValidations(validations: any[]) {
+  for (const val of validations) {
+    console.log(`Validating: ${val.type} (${val.message || ''})`);
+
+    switch (val.type) {
+      case 'elementVisible':
+        await expect(this.page.locator(val.selector)).toBeVisible({ timeout: 10000 });
+        break;
+
+      case 'textContains':
+        await expect(this.page.locator(val.selector)).toContainText(val.expected);
+        break;
+
+      case 'textEquals':
+        await expect(this.page.locator(val.selector)).toHaveText(val.expected);
+        break;
+
+      case 'countEquals':
+        await expect(this.page.locator(val.selector)).toHaveCount(Number(val.expected));
+        break;
+
+      default:
+        throw new Error(`Unknown validation type: ${val.type}`);
+    }
   }
+}
 
 }

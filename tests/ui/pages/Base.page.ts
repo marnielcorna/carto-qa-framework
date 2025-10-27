@@ -1,7 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { NavbarComponent } from './components/navbar.component';
 import { CanvasComponent } from './components/canvas.component';
-import { it } from 'node:test';
 
 export class BasePage {
   protected page: Page;
@@ -22,10 +21,7 @@ export class BasePage {
   async waitUntilVisible(locator: Locator, timeout = 30000) {
     await expect(locator).toBeVisible({ timeout });
   }
-  async waitUntilVisible2(locator: Locator, timeout = 300000) {
-    await expect(locator).toBeVisible({ timeout });
-  }
-
+  
   async safeClick(locator: Locator, timeout = 30000) {
     await this.waitUntilVisible(locator, timeout);
     await locator.click();
@@ -49,6 +45,32 @@ export class BasePage {
   async waitUntilReady() {
     await this.page.waitForLoadState('networkidle');
     await expect(this.page.locator('nav')).toBeVisible({ timeout: 30000 });
+  }
+
+  async delete(targetLocator: Locator, confirmLocator?: Locator) {
+  await this.waitForNoOverlays();
+  await this.safeClick(targetLocator);
+
+  if (confirmLocator) {
+    expect(confirmLocator).toBeVisible;
+  }
+
+  await this.waitExplicitly(1000, 'waiting for delete action to complete');
+}
+
+async waitForNoOverlays(timeout = 10000) {
+  const overlay = this.page.locator('//div[contains(@class,"MuiDialog-container") or contains(@class,"MuiModal-root")]');
+  try {
+    await expect(overlay).toHaveCount(0, { timeout });
+  } catch {
+    console.log('Overlay detected, waiting to disappear...');
+  }
+}
+
+
+  async waitExplicitly(milliseconds: number, reason = '') {
+    if (reason) console.log(`Waiting ${milliseconds}ms: ${reason}`);
+    await this.page.waitForTimeout(milliseconds);
   }
   
   async waitForNewTab(action: Promise<any>): Promise<Page> {
@@ -74,11 +96,11 @@ export class BasePage {
   }
   
   searchItemInPanelIsLoaded(item: string){
-    return this.getSelector(`//h6[contains(text(),"${item}")]/../..//*[contains(@class, "css-61elv4")]`)
+    return this.getSelector(`//h6[contains(text(),"${item}")]/../..//*[contains(@class, "css-61elv4")]`);
   }
   
   componentItemInPanelIsLoaded(item: string){
-    return this.getSelector(`//*[contains(text(),"${item}")]/../../..//*[@data-variant]`)
+    return this.getSelector(`//*[contains(text(),"${item}")]/../../..//*[@data-variant]`);
   }
   
 
