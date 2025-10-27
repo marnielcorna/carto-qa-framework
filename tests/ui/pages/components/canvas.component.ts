@@ -58,14 +58,10 @@ export class CanvasComponent {
 
       case 'component':
   
-        if (fromBox.includes('Spatial Filter')) {
-    
-          fromHandle = this.page.locator(
-            `//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-testid="output-0"]`
-          );
-          fromHandle2 = this.page.locator(
-            `//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-testid="output-1"]`
-          );
+        if (fromBox.includes('Simple Filter')) {
+          fromHandle = this.page.locator(`//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-testid="output-0"]`);
+          fromHandle2 = this.page.locator(`//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-testid="output-1"]`);
+
         } else {
     
           fromHandle = this.page.locator(`//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-handleid="out" or @data-testid="output-0"]`);
