@@ -10,7 +10,13 @@ export class WorkflowPage extends BasePage {
   get connectionDataBreadcrumb() { return this.getSelector('//*//p[contains(text(),"/ Connection Data")]'); }
   get demoDataBreadcrumb() { return this.getSelector('//*//p[contains(text(),"/ demo data")]'); }
   get demoTablesBreadcrumb() { return this.getSelector('//*//p[contains(text(),"/ demo_tables")]'); }
-  get sideBarSearchBar() { return this.getSelector('//*[@data-testid="workflow-explorer-search"]//input[@placeholder="Search"]'); }
+  get searchBarSources() { return this.getSelector('//input[@placeholder="Search"]'); }
+  get searchBarComponent() { return this.getSelector('//input[@placeholder="Search component"]'); }
+  get componentsTab() { return this.getSelector('//button[contains(text(),"Components")]'); }
+  get untitledWorkflowMenu() { return this.getSelector('//*[contains(text(),"Untitled")]/../..//*[@aria-label="workflow-actions-menu"]'); }
+  get untitledWorkflowMenuOptionDelete() { return this.getSelector('//*[contains(text(),"Delete")]'); }
+  get deleteConfirmationPopUp() { return this.getSelector('//*[contains(text(),"Delete workflow")]'); }
+  get deleteConfirmationPopUpButtonYes() { return this.getSelector('//*[contains(text(),"Yes, delete")]'); }
 
   constructor(page: Page) {
     super(page);
@@ -36,8 +42,10 @@ export class WorkflowPage extends BasePage {
     await expect(newPage).toHaveURL(/workflows\/[a-zA-Z0-9_-]+/);
 
     this.page = newPage;
+    this.canvas = new (require('./components/canvas.component').CanvasComponent)(this.page);
 
     await expect(this.editorReady).toBeVisible({timeout: 15000});
+    
   }
 
   async openDataBaseList() {
@@ -47,28 +55,56 @@ export class WorkflowPage extends BasePage {
   }
 
   async openDataBase(db: string) {
-    await super.waitUntilVisible(this.connectionDataBreadcrumb);
     await super.safeClick(this.getItemListedInSearchBar(db));
+    await super.waitUntilVisible(this.demoDataBreadcrumb);
   }
 
   async openDataBaseSchema(schema: string) {
-    await super.waitUntilVisible(this.demoDataBreadcrumb);
     await super.safeClick(this.getItemListedInSearchBar(schema));
+    await super.waitUntilVisible(this.demoTablesBreadcrumb);
   }
   
-  async selectAnduseDataset(dataset: string) {
-    await super.waitUntilVisible(this.demoTablesBreadcrumb);
-    await super.safeType(this.sideBarSearchBar, dataset);
+  async searchSources(item: string) {
+    await super.safeType(this.searchBarSources, item);
+    await super.safeType(this.searchBarSources, item);
     await super.pressKey('Enter');
-    
-    const datasetListed = this.getItemListedInSearchBar(dataset);
-
-    await super.waitUntilVisible(datasetListed);
-
-    //drag and drop.
-    
-    console.log('DONE??');
-    //await super.waitUntilVisible(this.createNewOptionInDropdown);
-
   }
+
+  async searchComponents(item: string) {
+    await super.safeType(this.searchBarComponent, item);
+    await super.safeType(this.searchBarComponent, item);
+    await super.pressKey('Enter');
+  }
+
+  async addSourcesToCanvas(item: string, quadrant = 1) {
+    await this.searchSources(item);
+    await this.canvas.dropElement(item, quadrant);
+    await super.waitUntilVisible(this.searchItemInPanelIsLoaded(item));
+  }
+  async addComponentsToCanvas(item: string, quadrant = 1) {
+    await this.searchComponents(item);
+    await this.canvas.dropElement(item, quadrant);
+    await super.waitUntilVisible(this.componentItemInPanelIsLoaded(item));
+  }
+
+  async linkComponent(type: string, from: string, to: string, targetHandle: string) {
+    await this.canvas.linkSourceElement(type, from, to, targetHandle);
+  }
+
+  async selectComponentsTab(){
+    await super.safeClick(this.componentsTab);
+  }
+  
+  async deleteLastMap(){
+    await super.open('/workflows')
+    await super.safeClick(this.untitledWorkflowMenu);
+    await super.safeClick(this.untitledWorkflowMenuOptionDelete);
+    await super.waitUntilVisible(this.deleteConfirmationPopUp);
+    await super.safeClick(this.deleteConfirmationPopUpButtonYes);
+  }
+
+  async testdos(){
+    await super.waitUntilVisible2(this.createNewOptionInDropdown);
+  }
+
 }
