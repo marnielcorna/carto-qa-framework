@@ -1,6 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { NavbarComponent } from './components/navbar.component';
 import { CanvasComponent } from './components/canvas.component';
+import { it } from 'node:test';
 
 export class BasePage {
   protected page: Page;
@@ -47,6 +48,11 @@ export class BasePage {
     await expect(this.page.locator('nav')).toBeVisible({ timeout: 30000 });
   }
 
+  async waitUntilDisappear() {
+    const progressbar = this.page.locator('//div[contains(@class, "css-1usa9hx"")]');
+    await progressbar.isHidden();
+  }
+
   async delete(targetLocator: Locator, confirmLocator?: Locator) {
   await this.waitForNoOverlays();
   await this.safeClick(targetLocator);
@@ -66,8 +72,6 @@ async waitForNoOverlays(timeout = 10000) {
     console.log('Overlay detected, waiting to disappear...');
   }
 }
-
-
   async waitExplicitly(milliseconds: number, reason = '') {
     if (reason) console.log(`Waiting ${milliseconds}ms: ${reason}`);
     await this.page.waitForTimeout(milliseconds);
@@ -102,7 +106,30 @@ async waitForNoOverlays(timeout = 10000) {
   componentItemInPanelIsLoaded(item: string){
     return this.getSelector(`//*[contains(text(),"${item}")]/../../..//*[@data-variant]`);
   }
+
+  getItemDisplayedInCanvaBoard(item: string){
+    return this.getSelector(`//span[contains(text(),"${item}")]/ancestor::div[@data-testid="WorkflowGenericNodeBox"]`);
+  }
+
+  async closeComponentPanel(){
+    const canvas = this.getSelector('//*[@data-testid="rf__wrapper"]')
+    await this.safeClick(canvas);
+  }
+
+  async createAndWaitUntilsIsNotVisible(item: string, timeout = 10000) {
+  const itemWithProgressBar = this.getSelector(`//h6[contains(text(),"${item}")]/../../..//span[@role="progressbar"]`);
+
+  await this.waitUntilVisible(itemWithProgressBar);
+  await expect(itemWithProgressBar).toBeHidden({ timeout });
+  console.log(`Progress bar for "${item}" finished and hidden.`);
+}
+
   
+  async selectOptionInDropdown(option: string) {
+    const dropdownOption = this.page.locator(`//li[contains(text(),"${option}")]`);
+    await this.safeClick(dropdownOption);
+  }
+
 
   async pressKey(key: string){
     await this.page.keyboard.press(key);

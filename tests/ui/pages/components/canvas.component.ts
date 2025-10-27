@@ -47,23 +47,16 @@ export class CanvasComponent {
 
     switch (type) {
       case 'source':
-  
-        fromHandle = this.page.locator(
-          `//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-handleid="out"]`
-        );
-        toHandle = this.page.locator(
-          `//*[contains(text(),"${toBox}")]/ancestor::*[@data-testid="WorkflowGenericNodeBox"]//*[@data-testid="${targetHandle}"]`
-        );
+        fromHandle = this.page.locator(`//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-handleid="out"]`);
+        toHandle = this.page.locator(`//*[contains(text(),"${toBox}")]/ancestor::*[@data-testid="WorkflowGenericNodeBox"]//*[@data-testid="${targetHandle}"]`);
         break;
 
       case 'component':
-  
         if (fromBox.includes('Simple Filter')) {
           fromHandle = this.page.locator(`//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-testid="output-0"]`);
           fromHandle2 = this.page.locator(`//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-testid="output-1"]`);
-
         } else {
-    
+
           fromHandle = this.page.locator(`//*[contains(text(),"${fromBox}")]/ancestor::*[@data-id]//*[@data-handleid="out" or @data-testid="output-0"]`);
         }
 

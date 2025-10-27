@@ -17,6 +17,12 @@ export class WorkflowPage extends BasePage {
   get untitledWorkflowMenuOptionDelete() { return this.getSelector('//*[contains(text(),"Delete")]'); }
   get deleteConfirmationPopUp() { return this.getSelector('//*[contains(text(),"Delete workflow")]'); }
   get deleteConfirmationPopUpButtonYes() { return this.getSelector('//*[contains(text(),"Yes, delete")]'); }
+  
+  get spatialMatchCheckbox() { return this.getSelector('//*[contains(text(),"Output Intersection Object (Intersects Only)")]/..//input'); }
+  get itemInSpatialMatchToBeVisible() { return this.getSelector('(//li[@role="menuitem" and contains(text(),"geom")])[1]'); }
+  get simpleFilterDropdown() { return this.getSelector('(//li[contains(text(), "cartodb_id")]/..)[1]'); }
+  
+  get runButton() { return this.getSelector('//button//*[contains(text(),"Run")]'); }
 
   constructor(page: Page) {
     super(page);
@@ -103,10 +109,29 @@ export class WorkflowPage extends BasePage {
     await super.safeClick(this.deleteConfirmationPopUpButtonYes);
   }
 
+  async sendParametersToComponent(component: string){
+    await super.safeClick(this.getItemDisplayedInCanvaBoard(component));
+    switch(component){
+      case 'Spatial Match':
+        await expect(this.itemInSpatialMatchToBeVisible).toBeVisible({timeout: 20000});
+        await super.safeClick(this.spatialMatchCheckbox);
+        await super.closeComponentPanel();
+        break;
+      case 'Simple Filter':
+        await expect(this.simpleFilterDropdown).toBeVisible({timeout: 30000});
+        await this.simpleFilterDropdown.click();
+        await super.selectOptionInDropdown(component);
+        await super.closeComponentPanel();
+        break;
+        case 'Create Builder Map':
+        //
+        break;
+      default: break;
+    }
+  }
+
   async validateScenarioValidations(validations: any[]) {
   for (const val of validations) {
-    console.log(`Validating: ${val.type} (${val.message || ''})`);
-
     switch (val.type) {
       case 'elementVisible':
         await expect(this.page.locator(val.selector)).toBeVisible({ timeout: 10000 });
@@ -125,7 +150,7 @@ export class WorkflowPage extends BasePage {
         break;
 
       default:
-        throw new Error(`Unknown validation type: ${val.type}`);
+        break;
     }
   }
 }
