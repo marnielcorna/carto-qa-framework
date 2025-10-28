@@ -1,4 +1,4 @@
-## 📘 Overview
+## Overview
 
 This project contains API and Ui Test cases focused in data driven frameworks.
 
@@ -13,7 +13,7 @@ It includes:
 * **Secure environment configuration** with `.env`
 * **CI/CD integration** via GitHub Actions
 
-## 🧱 Project Structure
+## Project Structure
 
 ```
 carto_projects/
@@ -56,13 +56,13 @@ carto_projects/
 npm ci
 ```
 
-### 2️Install Playwright browsers
+### Install Playwright browsers
 
 ```bash
 npx playwright install --with-deps
 ```
 
-### 3️⃣ Environment configuration
+### Environment configuration
 
 Create a `.env` file in the project root:
 
@@ -96,7 +96,7 @@ npx playwright test --project=ui-firefox
 npx playwright test
 ```
 
-## 📊 Reports
+## Reports
 
 After execution:
 
@@ -105,7 +105,7 @@ npx playwright show-report
 ```
 
 
-## ✅ Linting
+## ES Lint validation
 
 Run ESLint manually:
 
