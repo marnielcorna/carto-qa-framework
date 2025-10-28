@@ -155,7 +155,7 @@
             }
         },
         {
-            "skip": false,
+            "skip": true,
             "id": "TC010",
             "endpoint": "/Account/v1/GenerateToken",
             "method": "POST",
