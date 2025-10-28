@@ -88,7 +88,7 @@ test.describe('BookStore API Suite', () => {
 
         console.log(`${scenario.id} - ${scenario.description} passed`);
       } catch (error: any) {
-        console.warn(`Test ${scenario.id} failed, but continuing...`);
+        console.warn(`Test ${scenario.id} failed, but continuing... `);
         console.warn(error.message);
       }
     });
