@@ -1,7 +1,7 @@
 {
     "environments": {
         "qa": {
-            "baseUrl": "${API_URL}",
+            "baseUrl": "",
             "headers": {
                 "Content-Type": "application/json"
             }
@@ -9,8 +9,8 @@
     },
     "users": {
         "valid": {
-            "userName": "${API_USER_NAME}",
-            "password": "${API_USER_PASSWORD}"
+            "userName": "",
+            "password": ""
         },
         "invalid": {
             "userName": "marcos_test",
@@ -201,7 +201,7 @@
             "expected": {
                 "status": 201,
                 "schemaKeys": [
-                    "isbn"
+                    "books"
                 ]
             }
         },

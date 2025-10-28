@@ -27,7 +27,6 @@ export class UserSession {
     expect(response.status()).toBe(201);
     this.userId = body.userID || body.userId;
 
-    // genera token automáticamente
     await this.generateToken(userName, password);
 
     return this.userId!;
@@ -52,7 +51,7 @@ export class UserSession {
     const response = await this.api.delete(`/Account/v1/User/${this.userId}`, {
       headers: { Authorization: `Bearer ${this.token}` }
     });
-    console.log(`User ${this.userId} deleted → status ${response.status()}`);
+    console.log(`User ${this.userId} deleted.`);
   }
 
   async dispose(): Promise<void> {

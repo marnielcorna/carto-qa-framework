@@ -8,7 +8,7 @@ const env = helper.getEnv();
 const session = new UserSession(helper);
 
 let userId = '';
-let token: any | '';
+let token: string;
 
 test.describe('Account API Suite', () => {
   test.describe.configure({ mode: 'serial' });
@@ -37,6 +37,11 @@ test.describe('Account API Suite', () => {
 
         const body = scenario.body ? helper.resolveBody(scenario.body) : undefined;
 
+        if (scenario.id === 'TC001' && (!body?.userName || !body?.password)) {
+          body.userName = process.env.API_USER_NAME!;
+          body.password = process.env.API_USER_PASSWORD!;
+        }
+
         if (scenario.id === 'TC001' && body?.userName) {
           body.userName = `${body.userName}_${Date.now()}`;
         }
@@ -44,7 +49,6 @@ test.describe('Account API Suite', () => {
         ApiLogger.logRequest(scenario, env.baseUrl, endpoint, headers, body);
 
         let response: APIResponse;
-
         switch (scenario.method.toUpperCase()) {
           case 'POST':
             response = await context.post(endpoint, { data: body, headers });
@@ -56,7 +60,7 @@ test.describe('Account API Suite', () => {
             response = await context.delete(endpoint, { headers, data: body });
             break;
           default:
-            throw new Error(`${scenario.method}`);
+            throw new Error(`Unsupported HTTP method: ${scenario.method}`);
         }
 
         await ApiLogger.logResponse(response);
@@ -71,9 +75,7 @@ test.describe('Account API Suite', () => {
           for (const key of scenario.expected.schemaKeys) {
             const hasKey = Object.prototype.hasOwnProperty.call(json, key);
             if (!hasKey) {
-              const altKey =
-                key === 'userID' ? 'userId' :
-                key === 'userId' ? 'userID' : key;
+              const altKey = key === 'userID' ? 'userId' : key;
               expect(json).toHaveProperty(altKey);
             } else {
               expect(json).toHaveProperty(key);

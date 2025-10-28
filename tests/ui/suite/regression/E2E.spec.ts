@@ -41,11 +41,6 @@ for (const scenario of scenarios) {
         await workflow.sendParametersToComponent(node.name);
       }
 
-      // Validations
-      // if (scenario.validations) {
-      //   await workflow.validateScenarioValidations(scenario.validations);
-      // }
-
       console.log(`Finished scenario: ${scenario.metadata.id}`);
     });
 
