@@ -113,7 +113,7 @@ Run ESLint manually:
 npx eslint . --ext .ts,.js
 ```
 
-## ⚡ CI/CD Pipeline (GitHub Actions)
+## CI/CD Pipeline (GitHub Actions)
 
 The workflow runs:
 
