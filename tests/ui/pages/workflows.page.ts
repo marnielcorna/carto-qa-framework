@@ -48,7 +48,9 @@ export class WorkflowPage extends BasePage {
     await expect(newPage).toHaveURL(/workflows\/[a-zA-Z0-9_-]+/);
 
     this.page = newPage;
-    this.canvas = new (require('./components/canvas.component').CanvasComponent)(this.page);
+    const { CanvasComponent } = await import('./components/canvas.component');
+    this.canvas = new CanvasComponent(this.page);
+
 
     await expect(this.editorReady).toBeVisible({timeout: 15000});
     

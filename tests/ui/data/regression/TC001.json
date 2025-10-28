@@ -7,6 +7,7 @@
     "tags": ["ui", "create", "regression"]
   },
   "context": {
+    "pages:": ["/workflows"],
     "database": "demo data",
     "schema": "demo_tables"
   },

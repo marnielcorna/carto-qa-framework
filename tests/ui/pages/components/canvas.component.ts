@@ -2,7 +2,9 @@ import { Locator, Page, expect } from '@playwright/test';
 
 export class CanvasComponent {
 
-  constructor(private page: Page) {}
+  constructor(private page: Page) {
+    this.page = page;
+  }
 
   async dropElement(elementText: string, quadrant = 1) {
     const canvas = this.page.locator('//*[@data-testid="rf__wrapper"]');

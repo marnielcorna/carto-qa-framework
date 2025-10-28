@@ -12,6 +12,7 @@ export interface WorkflowScenario {
   context: {
     database: string;
     schema: string;
+    pages: string[];
   };
   nodes: {
     type: string;

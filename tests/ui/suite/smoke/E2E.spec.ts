@@ -1,8 +1,8 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { WorkflowPage } from '../../pages/workflows.page';
 import { loadWorkflowScenarios } from '../../utils/scenarioLoader';
 
-const scenarios = loadWorkflowScenarios("smoke");
+const scenarios = loadWorkflowScenarios('smoke');
 
 for (const scenario of scenarios) {
   test.describe(`${scenario.metadata.id} - ${scenario.metadata.name}`, () => {
@@ -13,6 +13,8 @@ for (const scenario of scenarios) {
       console.log(`Starting scenario: ${scenario.metadata.id} - ${scenario.metadata.name}`);
 
       await workflow.open();
+      await expect(page).toHaveURL(/workflows\/[a-zA-Z0-9_-]+/);
+      
       await workflow.openNewWorkflow();
       await workflow.openDataBaseList();
       await workflow.openDataBase(scenario.context.database);

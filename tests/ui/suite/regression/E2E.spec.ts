@@ -1,10 +1,10 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { WorkflowPage } from '../../pages/workflows.page';
 import { loadWorkflowScenarios } from '../../utils/scenarioLoader';
 
-const scenarios = loadWorkflowScenarios("regression");
+const scenarios = loadWorkflowScenarios('regression');
 
-for(const scenario of scenarios) {
+for (const scenario of scenarios) {
   test.describe(`${scenario.metadata.id} - ${scenario.metadata.name}`, () => {
 
     test(`Execute scenario [${scenario.metadata.tags}]`, async ({ page }) => {
@@ -13,28 +13,31 @@ for(const scenario of scenarios) {
       console.log(`Starting scenario: ${scenario.metadata.id} - ${scenario.metadata.name}`);
 
       await workflow.open();
+      await expect(page).toHaveURL(/workflows\/[a-zA-Z0-9_-]+/);
+
       await workflow.openNewWorkflow();
       await workflow.openDataBaseList();
+
       await workflow.openDataBase(scenario.context.database);
       await workflow.openDataBaseSchema(scenario.context.schema);
 
       // Sources
-      for(const node of scenario.nodes.filter(n => n.type === 'source')) {
+      for (const node of scenario.nodes.filter(n => n.type === 'source')) {
         await workflow.addSourcesToCanvas(node.name, node.quadrant);
       }
 
       // Components
       await workflow.selectComponentsTab();
-      for(const node of scenario.nodes.filter(n => n.type === 'component')) {
+      for (const node of scenario.nodes.filter(n => n.type === 'component')) {
         await workflow.addComponentsToCanvas(node.name, node.quadrant);
       }
-      
+
       // Connections
-      for(const connection of scenario.connections) {
+      for (const connection of scenario.connections) {
         await workflow.linkComponent(connection.type, connection.from, connection.to, connection.targetHandle);
       }
-      
-      for(const node of scenario.nodes.filter(n => n.type === 'component')) {
+
+      for (const node of scenario.nodes.filter(n => n.type === 'component')) {
         await workflow.sendParametersToComponent(node.name);
       }
 

@@ -1,7 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { NavbarComponent } from './components/navbar.component';
 import { CanvasComponent } from './components/canvas.component';
-import { it } from 'node:test';
 
 export class BasePage {
   protected page: Page;
@@ -44,7 +43,7 @@ export class BasePage {
   }
 
   async waitUntilReady() {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
     await expect(this.page.locator('nav')).toBeVisible({ timeout: 30000 });
   }
 
@@ -58,10 +57,8 @@ export class BasePage {
   await this.safeClick(targetLocator);
 
   if (confirmLocator) {
-    expect(confirmLocator).toBeVisible;
+    await expect(confirmLocator).toBeVisible();
   }
-
-  await this.waitExplicitly(1000, 'waiting for delete action to complete');
 }
 
 async waitForNoOverlays(timeout = 10000) {
@@ -72,10 +69,6 @@ async waitForNoOverlays(timeout = 10000) {
     console.log('Overlay detected, waiting to disappear...');
   }
 }
-  async waitExplicitly(milliseconds: number, reason = '') {
-    if (reason) console.log(`Waiting ${milliseconds}ms: ${reason}`);
-    await this.page.waitForTimeout(milliseconds);
-  }
   
   async waitForNewTab(action: Promise<any>): Promise<Page> {
     console.log('Waiting for new Tab.');
@@ -112,7 +105,7 @@ async waitForNoOverlays(timeout = 10000) {
   }
 
   async closeComponentPanel(){
-    const canvas = this.getSelector('//*[@data-testid="rf__wrapper"]')
+    const canvas = this.getSelector('//*[@data-testid="rf__wrapper"]');
     await this.safeClick(canvas);
   }
 
