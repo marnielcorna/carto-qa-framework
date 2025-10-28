@@ -2,7 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({
+  path: path.resolve(process.cwd(), '.env'),
+  override: true
+});
+
 
 export class ApiHelper {
   testData: any;
@@ -24,32 +28,41 @@ export class ApiHelper {
   }
 
   getEnv() {
-    return this.testData.environments.qa;
+    const env = this.testData.environments.qa;
+    this.resolveEnvVars(env);
+
+    if (!env.baseUrl || !env.baseUrl.startsWith('http')) {
+      throw new Error(`Invalid or missing API baseUrl. Value: "${env.baseUrl}"`);
+    }
+
+    console.log(`[ENV] Using base URL: ${env.baseUrl}`);
+    return env;
   }
+
 
   getScenarios() {
     return this.testData.scenarios;
   }
 
   resolveBody(body: any) {
-  if (typeof body === 'string' && body.startsWith('@')) {
-    const pathParts = body.slice(1).split('.');
+    if (typeof body === 'string' && body.startsWith('@')) {
+      const pathParts = body.slice(1).split('.');
 
-    if (pathParts.length === 2) {
-      const [ref, key] = pathParts;
-      return this.testData[ref][key];
+      if (pathParts.length === 2) {
+        const [ref, key] = pathParts;
+        return this.testData[ref][key];
+      }
+
+      if (pathParts.length === 3) {
+        const [group, sub, key] = pathParts;
+        return this.testData[group][sub][key];
+      }
+
+      throw new Error(`Invalid body reference syntax: ${body}`);
     }
 
-    if (pathParts.length === 3) {
-      const [group, sub, key] = pathParts;
-      return this.testData[group][sub][key];
-    }
-
-    throw new Error(`Invalid body reference syntax: ${body}`);
+    return body;
   }
-
-  return body;
-}
 
 
 }
