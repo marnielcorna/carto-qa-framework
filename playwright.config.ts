@@ -21,7 +21,7 @@ export default defineConfig({
     },
     {
       name: 'ui-chromium',
-      testDir: './tests/ui',
+      testDir: './tests/ui/suite',
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'auth.json',
@@ -30,7 +30,7 @@ export default defineConfig({
     },
     {
       name: 'ui-firefox',
-      testDir: './tests/ui',
+      testDir: './tests/ui/suite',
       use: {
         ...devices['Desktop Firefox'],
         storageState: 'auth.json',
