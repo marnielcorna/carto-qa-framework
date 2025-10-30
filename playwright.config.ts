@@ -40,6 +40,7 @@ export default defineConfig({
     {
       name: 'api-tests',
       testDir: './tests/api',
+      fullyParallel: false,
       use: {
         baseURL: process.env.API_URL,
         extraHTTPHeaders: { 'Content-Type': 'application/json' },

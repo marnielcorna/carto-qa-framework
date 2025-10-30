@@ -1,335 +1,321 @@
 {
-    "environments": {
-        "qa": {
-            "baseUrl": "${API_URL}",
-            "headers": {
-                "Content-Type": "application/json"
-            }
-        }
+  "scenarios": [
+    {
+      "skip": false,
+      "id": "TC001",
+      "endpoint": "/Account/v1/User",
+      "method": "POST",
+      "description": "Verify user creation when sending valid data",
+      "requiresToken": false,
+      "requiresUser": false,
+      "cleanup": false,
+      "expected": {
+        "status": 201,
+        "schemaKeys": ["userID", "username", "books"]
+      }
     },
-    "users": {
-        "valid": {
-            "userName": "${API_USER_NAME}",
-            "password": "${API_USER_PASSWORD}"
-        },
-        "invalid": {
-            "userName": "marcos_test",
-            "password": "111111"
-        }
+    {
+      "skip": false,
+      "id": "TC002",
+      "endpoint": "/Account/v1/User",
+      "method": "POST",
+      "description": "Verify user creation when sending invalid password format",
+      "requiresToken": false,
+      "requiresUser": false,
+      "invalidPassword": true,
+      "cleanup": true,
+      "expected": {
+        "status": 400,
+        "schemaKeys": ["code", "message"]
+      }
     },
-    "scenarios": [
-        {
-            "skip": false,
-            "id": "TC001",
-            "endpoint": "/Account/v1/User",
-            "method": "POST",
-            "description": "Verify user creation when sending valid data",
-            "body": "@users.valid",
-            "expected": {
-                "status": 201,
-                "schemaKeys": [
-                    "userID",
-                    "username",
-                    "books"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC002",
-            "endpoint": "/Account/v1/User",
-            "method": "POST",
-            "description": "Verify user creation when sending invalid password format",
-            "body": "@users.invalid",
-            "expected": {
-                "status": 400,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC003",
-            "endpoint": "/Account/v1/User/{UUID}",
-            "method": "GET",
-            "auth": "token",
-            "description": "Verify existing user can be retrieved",
-            "expected": {
-                "status": 200,
-                "schemaKeys": [
-                    "userId",
-                    "username",
-                    "books"
-                ]
-            }
-        },
-        {
-            "skip": true,
-            "id": "TC004",
-            "endpoint": "/Account/v1/User/{UUID}",
-            "method": "DELETE",
-            "auth": "token",
-            "description": "Verify user can be deleted with valid token",
-            "expected": {
-                "status": 200,
-                "schemaKeys": []
-            }
-        },
-        {
-            "skip": true,
-            "id": "TC005",
-            "endpoint": "/Account/v1/User/{UUID}",
-            "method": "DELETE",
-            "auth": "token",
-            "description": "Verify system returns invalid user id message with valid token",
-            "expected": {
-                "status": 200,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC006",
-            "endpoint": "/Account/v1/User/{UUID}",
-            "method": "GET",
-            "auth": "invalid",
-            "description": "Verify unauthorized access without token",
-            "expected": {
-                "status": 200,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC007",
-            "endpoint": "/Account/v1/Authorized",
-            "method": "POST",
-            "description": "Verify user can log in with valid credentials",
-            "body": "@users.valid",
-            "expected": {
-                "status": 200,
-                "body": true
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC008",
-            "endpoint": "/Account/v1/Authorized",
-            "method": "POST",
-            "description": "Verify error message when using invalid credentials",
-            "body": {
-                "userName": "invalidUser",
-                "password": "invalidpassword"
-            },
-            "expected": {
-                "status": 400,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC009",
-            "endpoint": "/Account/v1/GenerateToken",
-            "method": "POST",
-            "description": "Verify token is generated for valid user credentials",
-            "body": "@users.valid",
-            "expected": {
-                "status": 200,
-                "schemaKeys": [
-                    "token",
-                    "expires",
-                    "status",
-                    "result"
-                ]
-            }
-        },
-        {
-            "skip": true,
-            "id": "TC010",
-            "endpoint": "/Account/v1/GenerateToken",
-            "method": "POST",
-            "description": "Verify error when sending empty body",
-            "body": {},
-            "expected": {
-                "status": 400,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC011",
-            "endpoint": "/BookStore/v1/Books",
-            "method": "GET",
-            "auth": "token",
-            "description": "Verify all books are listed for a user that has books",
-            "expected": {
-                "status": 200,
-                "schemaKeys": [
-                    "books"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC012",
-            "endpoint": "/BookStore/v1/Books",
-            "method": "POST",
-            "auth": "token",
-            "description": "Verify book can be added to user collection",
-            "body": {
-                "userId": "{UUID}",
-                "collectionOfIsbns": [
-                    {
-                        "isbn": "9781449331818"
-                    }
-                ]
-            },
-            "expected": {
-                "status": 201,
-                "schemaKeys": [
-                    "isbn"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC013",
-            "endpoint": "/BookStore/v1/Books",
-            "method": "POST",
-            "description": "Verify unauthorized request without token",
-            "expected": {
-                "status": 401,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC014",
-            "endpoint": "/BookStore/v1/Book?ISBN={id}",
-            "method": "GET",
-            "description": "Verify book details by ISBN",
-            "expected": {
-                "status": 200,
-                "schemaKeys": [
-                    "isbn",
-                    "title",
-                    "subTitle",
-                    "author",
-                    "pages",
-                    "description"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC015",
-            "endpoint": "/BookStore/v1/Book?ISBN={id}",
-            "method": "GET",
-            "description": "Verify error for non-existing book",
-            "expected": {
-                "status": 400,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC016",
-            "endpoint": "/BookStore/v1/Books/{ISBN}",
-            "method": "PUT",
-            "auth": "token",
-            "description": "Verify user can replace a book with valid ISBN and token",
-            "body": {
-                "userId": "{UUID}",
-                "isbn": "9781449325862"
-            },
-            "expected": {
-                "status": 200
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC017",
-            "endpoint": "/BookStore/v1/Books/{ISBN}",
-            "method": "PUT",
-            "auth": "token",
-            "description": "Verify error when ISBN is invalid",
-            "body": {
-                "userId": "{UUID}",
-                "isbn": "invalid-isbn"
-            },
-            "expected": {
-                "status": 400
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC018",
-            "endpoint": "/BookStore/v1/Book",
-            "method": "DELETE",
-            "auth": "token",
-            "description": "Verify a specific book can be deleted",
-            "body": {
-                "isbn": "9781449331818",
-                "userId": "{UUID}"
-            },
-            "expected": {
-                "status": 204,
-                "schemaKeys": [
-                    "userId",
-                    "isbn",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC019",
-            "endpoint": "/BookStore/v1/Books?userId={UUID}",
-            "method": "DELETE",
-            "auth": "token",
-            "description": "Verify user can delete all their books (valid token)",
-            "expected": {
-                "status": 204,
-                "schemaKeys": [
-                    "userId",
-                    "message"
-                ]
-            }
-        },
-        {
-            "skip": false,
-            "id": "TC020",
-            "endpoint": "/BookStore/v1/Books?userId={UUID}",
-            "method": "DELETE",
-            "auth": "invalid",
-            "description": "Verify user can delete all their books (invalid token)",
-            "expected": {
-                "status": 401,
-                "schemaKeys": [
-                    "code",
-                    "message"
-                ]
-            }
-        }
-    ]
+    {
+      "skip": false,
+      "id": "TC003",
+      "endpoint": "/Account/v1/User/{UUID}",
+      "method": "GET",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify existing user can be retrieved",
+      "cleanup": true,
+      "expected": {
+        "status": 200,
+        "schemaKeys": ["userId", "username", "books"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC004",
+      "endpoint": "/Account/v1/User/{UUID}",
+      "method": "DELETE",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify user can be deleted with valid token",
+      "cleanup": true,
+      "expected": {
+        "status": 204
+      }
+    },
+    {
+      "id": "TC005",
+      "endpoint": "/Account/v1/User/{UUID}",
+      "method": "DELETE",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "invalidUuid": true,
+      "description": "Verify system returns invalid user id message with valid token",
+      "cleanup": true,
+      "expected": {
+        "status": 200,
+        "schemaKeys": ["code", "message"]
+      }
+    },
+    {
+      "id": "TC006",
+      "endpoint": "/Account/v1/User/{UUID}",
+      "method": "GET",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "useInvalidToken": true,
+      "description": "Verify unauthorized access when using invalid token",
+      "cleanup": true,
+      "expected": {
+        "status": 401,
+        "schemaKeys": ["code", "message"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC007",
+      "endpoint": "/Account/v1/Authorized",
+      "method": "POST",
+      "description": "Verify user can log in with valid credentials",
+      "requiresToken": false,
+      "requiresUser": false,
+      "cleanup": true,
+      "expected": {
+        "status": 200,
+        "body": true
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC008",
+      "endpoint": "/Account/v1/Authorized",
+      "method": "POST",
+      "description": "Verify error message when using invalid credentials",
+      "requiresToken": false,
+      "requiresUser": false,
+      "cleanup": true,
+      "expected": {
+        "status": 400,
+        "schemaKeys": ["code", "message"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC009",
+      "endpoint": "/Account/v1/GenerateToken",
+      "method": "POST",
+      "description": "Verify token is generated for valid user credentials",
+      "requiresToken": false,
+      "requiresUser": false,
+      "cleanup": true,
+      "expected": {
+        "status": 200,
+        "schemaKeys": ["token", "expires", "status", "result"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC010",
+      "endpoint": "/Account/v1/GenerateToken",
+      "method": "POST",
+      "description": "Verify error when sending empty body",
+      "requiresToken": false,
+      "requiresUser": false,
+      "cleanup": true,
+      "expected": {
+        "status": 400,
+        "schemaKeys": ["code", "message"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC011",
+      "endpoint": "/BookStore/v1/Books",
+      "method": "GET",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify all books are listed for a user that has books",
+      "cleanup": true,
+      "expected": {
+        "status": 200,
+        "schemaKeys": ["books"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC012",
+      "endpoint": "/BookStore/v1/Books",
+      "method": "POST",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify book can be added to user collection",
+      "body": {
+        "userId": "{UUID}",
+        "collectionOfIsbns": [{ "isbn": "9781449331818" }]
+      },
+      "cleanup": true,
+      "expected": {
+        "status": 201,
+        "schemaKeys": ["isbn"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC013",
+      "endpoint": "/BookStore/v1/Books",
+      "method": "POST",
+      "auth": "invalid",
+      "useInvalidToken": true,
+      "description": "Verify unauthorized request without token",
+      "cleanup": true,
+      "expected": {
+        "status": 401,
+        "schemaKeys": ["code", "message"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC014",
+      "endpoint": "/BookStore/v1/Book?ISBN={id}",
+      "method": "GET",
+      "description": "Verify book details by ISBN",
+      "requiresUser": false,
+      "requiresToken": false,
+      "cleanup": true,
+      "expected": {
+        "status": 200,
+        "schemaKeys": ["isbn", "title", "subTitle", "author", "pages", "description"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC015",
+      "endpoint": "/BookStore/v1/Book?ISBN={id}",
+      "method": "GET",
+      "description": "Verify error for non-existing book",
+      "requiresUser": false,
+      "requiresToken": false,
+      "cleanup": true,
+      "expected": {
+        "status": 400,
+        "schemaKeys": ["code", "message"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC016",
+      "endpoint": "/BookStore/v1/Books/{ISBN}",
+      "method": "PUT",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify user can replace a book with valid ISBN and token",
+      "body": {
+        "userId": "{UUID}",
+        "isbn": "9781449325862"
+      },
+      "cleanup": true,
+      "expected": {
+        "status": 200
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC017",
+      "endpoint": "/BookStore/v1/Books/{ISBN}",
+      "method": "PUT",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify error when ISBN is invalid",
+      "body": {
+        "userId": "{UUID}",
+        "isbn": "invalid-isbn"
+      },
+      "cleanup": true,
+      "expected": {
+        "status": 400
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC018",
+      "endpoint": "/BookStore/v1/Book",
+      "method": "DELETE",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify a specific book can be deleted",
+      "body": {
+        "isbn": "9781449331818",
+        "userId": "{UUID}"
+      },
+      "cleanup": true,
+      "expected": {
+        "status": 204,
+        "schemaKeys": ["userId", "isbn", "message"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC019",
+      "endpoint": "/BookStore/v1/Books?userId={UUID}",
+      "method": "DELETE",
+      "auth": "token",
+      "requiresUser": true,
+      "requiresNewUser": true,
+      "requiresToken": true,
+      "description": "Verify user can delete all their books (valid token)",
+      "cleanup": true,
+      "expected": {
+        "status": 204,
+        "schemaKeys": ["userId", "message"]
+      }
+    },
+    {
+      "skip": false,
+      "id": "TC020",
+      "endpoint": "/BookStore/v1/Books?userId={UUID}",
+      "method": "DELETE",
+      "auth": "invalid",
+      "useInvalidToken": true,
+      "invalidUuid": true,
+      "requiresUser": false,
+      "requiresToken": false,
+      "description": "Verify user can delete all their books (invalid token)",
+      "cleanup": true,
+      "expected": {
+        "status": 401,
+        "schemaKeys": ["code", "message"]
+      }
+    }
+  ]
 }

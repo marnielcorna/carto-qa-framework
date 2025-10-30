@@ -2,100 +2,62 @@ import { test, expect, request, APIResponse } from '@playwright/test';
 import { ApiHelper } from '../utils/apiHelper';
 import { ApiLogger } from '../utils/apiLogger';
 import { UserSession } from '../utils/userSession';
+import { sendApiRequest } from '../utils/sendApiRequest';
+import { buildRequestData } from '../utils/buildRequestData';
 
 const helper = new ApiHelper();
-const env = helper.getEnv();
-const session = new UserSession(helper);
-
-let userId = '';
-let token: any | '';
+const env = helper.getEnvConfig();
 
 test.describe('Account API Suite', () => {
-  test.describe.configure({ mode: 'serial' });
+  let session: UserSession;
 
-  const scenarios = helper.getScenarios().filter((s: { id: string }) => s.id <= 'TC009');
-
-  test.beforeAll(async () => {
+  test.beforeEach(async () => {
+    session = new UserSession();
     await session.init();
   });
+
+  test.afterEach(async () => {
+    console.log('Cleaning up after test...');
+    await session.deleteUser();
+    await session.dispose();
+  });
+
+  const scenarios = helper.getScenarios().filter((s: { id: string }) => s.id <= 'TC009');
 
   for (const scenario of scenarios) {
     const runTest = scenario.skip ? test.skip : test;
 
     runTest(`${scenario.id} - ${scenario.description}`, async () => {
-      try {
-        const context = await request.newContext({
-          baseURL: env.baseUrl,
-          extraHTTPHeaders: env.headers,
-        });
+      let userId = '';
+      let token = '';
 
-        const endpoint = scenario.endpoint.replace('{UUID}', userId);
-        const headers: Record<string, string> = { ...env.headers };
+      const context = await request.newContext({
+        baseURL: env.baseUrl,
+        extraHTTPHeaders: env.headers,
+      });
 
-        if (scenario.auth === 'token') headers['Authorization'] = `Bearer ${token}`;
-        if (scenario.auth === 'invalid') headers['Authorization'] = 'Bearer invalid';
+      const { endpoint, headers, body } = await buildRequestData(scenario, session);
 
-        const body = scenario.body ? helper.resolveBody(scenario.body) : undefined;
+      ApiLogger.logRequest(scenario, env.baseUrl, endpoint, headers, body);
 
-        if (scenario.id === 'TC001' && body?.userName) {
-          body.userName = `${body.userName}_${Date.now()}`;
+      const response = await sendApiRequest(context, scenario.method, endpoint, headers, body);
+
+      await ApiLogger.logResponse(response);
+
+      const expectedStatus = scenario.expected.status;
+      expect(response.status()).toBe(expectedStatus);
+      console.warn(`THIS CURRENT CODE:: ${response.status()}`);
+      console.warn(`THIS EXPECTED CODE:: ${expectedStatus}`);
+
+      const json = await response.json().catch(() => ({}));
+      console.warn(`THIS JSON:: ${json}`);
+
+      if (scenario.expected.schemaKeys) {
+        for (const key of scenario.expected.schemaKeys) {
+          expect(json).toHaveProperty(key);
         }
-
-        ApiLogger.logRequest(scenario, env.baseUrl, endpoint, headers, body);
-
-        let response: APIResponse;
-
-        switch (scenario.method.toUpperCase()) {
-          case 'POST':
-            response = await context.post(endpoint, { data: body, headers });
-            break;
-          case 'GET':
-            response = await context.get(endpoint, { headers });
-            break;
-          case 'DELETE':
-            response = await context.delete(endpoint, { headers, data: body });
-            break;
-          default:
-            throw new Error(`${scenario.method}`);
-        }
-
-        await ApiLogger.logResponse(response);
-        expect(response.status()).toBe(scenario.expected.status);
-
-        const json = await response.json().catch(() => ({}));
-
-        if (scenario.id === 'TC001' && json.userID) userId = json.userID;
-        if (scenario.id === 'TC009' && json.token) token = json.token;
-
-        if (scenario.expected.schemaKeys) {
-          for (const key of scenario.expected.schemaKeys) {
-            const hasKey = Object.prototype.hasOwnProperty.call(json, key);
-            if (!hasKey) {
-              const altKey =
-                key === 'userID' ? 'userId' :
-                key === 'userId' ? 'userID' : key;
-              expect(json).toHaveProperty(altKey);
-            } else {
-              expect(json).toHaveProperty(key);
-            }
-          }
-        }
-
-        console.log(`${scenario.id} - ${scenario.description} passed`);
-      } catch (error: any) {
-        console.warn(`Test: ${scenario.id} failed, but continuing...`);
-        console.warn(error.message);
       }
+      console.log(`${scenario.id} - ${scenario.description} passed`);
     });
   }
-
-  test.afterAll(async () => {
-    if (userId && token) {
-      console.log('Cleaning up user session...');
-      await session.init();
-      session.userId = userId;
-      session.token = token;
-      await session.deleteUser();
-    }
-  });
 });
