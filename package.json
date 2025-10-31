@@ -4,17 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --ext .ts,.js",
-    "test:ui:smoke": "npx playwright test --project=ui-chromium --grep 'smoke'",
-    "test:ui:regression": "npx playwright test --project=ui-chromium --grep 'regression'",
-    "test:ui:create": "npx playwright test --project=ui-chromium --grep 'create'",
-    "test:ui:update": "npx playwright test --project=ui-chromium --grep 'update'",
-    "test:ui:smoke:headed": "npx playwright test --project=ui-chromium --grep 'smoke' --headed --headed",
-    "test:ui:regression:headed": "npx playwright test --project=ui-chromium --grep 'regression' --headed",
-    "test:ui:create:headed": "npx playwright test --project=ui-chromium --grep 'create' --headed",
-    "test:ui:update:headed": "npx playwright test --project=ui-chromium --grep 'update' --headed",
-    "test:api": "npx playwright test --project=api-tests"
-  },
+  "lint": "eslint . --ext .ts,.js",
+  "test:ui": "npx playwright test --project=ui-chromium",
+  "test:ui:all": "npx playwright test --project=ui-chromium --project=ui-firefox --reporter=html",
+  "test:ui:smoke": "npm run test:ui -- --grep 'smoke'",
+  "test:ui:regression": "npm run test:ui -- --grep 'regression'",
+  "test:ui:create": "npm run test:ui -- --grep 'create'",
+  "test:ui:update": "npm run test:ui -- --grep 'update'",
+  "test:ui:headed": "npm run test:ui:all -- --headed",
+  "test:api": "npx playwright test --project=api-tests --reporter=html"
+}
+,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marnielcorna/carto-qa-framework.git"
