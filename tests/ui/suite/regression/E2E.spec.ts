@@ -34,12 +34,7 @@ for (const scenario of scenarios) {
 
       // Connections
       for (const connection of scenario.connections) {
-        await workflow.linkComponent(
-          connection.type,
-          connection.from,
-          connection.to,
-          connection.targetHandle
-        );
+        await workflow.linkComponent(connection.type, connection.from, connection.to, connection.targetHandle);
       }
 
       // Parameters
