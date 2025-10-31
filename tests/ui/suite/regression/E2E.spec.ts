@@ -18,7 +18,7 @@ for (const scenario of scenarios) {
 
       await workflow.openNewWorkflow();
       await workflow.openDataBaseList();
-      await workflow.openDataBase(uiConfig.username);
+      await workflow.openDataBase(scenario.context.database);
       await workflow.openDataBaseSchema(scenario.context.schema);
 
       // Sources
