@@ -50,6 +50,12 @@ test.describe('BookStore API Suite', () => {
       // Parsear JSON
       const json = await response.json().catch(() => ({}));
       console.log(`${scenario.id} - ${scenario.description} passed.`);
+
+      if (scenario.expected.schemaKeys) {
+        for (const key of scenario.expected.schemaKeys) {
+          expect(json).toHaveProperty(key);
+        }
+      }
     });
   }
 });

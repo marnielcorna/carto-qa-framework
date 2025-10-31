@@ -80,14 +80,32 @@ UI_PASSWORD=your_password
 ### API tests
 
 ```bash
-npx playwright test --project=api-tests
+npm run test:api
 ```
 
 ### UI tests
-
+For running Test by browser, you can run:
 ```bash
-npx playwright test --project=ui-chromium
-npx playwright test --project=ui-firefox
+npm test:ui:chromium
+npm test:ui:firefox
+```
+
+For running all UI test cases:
+```bash
+npm run test:ui:all
+npm run test:ui:smoke
+npm run test:ui:regression
+```
+
+For running Test cases based on Suites:
+```bash
+npm run test:ui:smoke
+npm run test:ui:regression
+```
+
+For running all API Tests:
+```bash
+npm run test:ui:api
 ```
 
 ### Run all tests (UI + API)
@@ -101,7 +119,7 @@ npx playwright test
 After execution:
 
 ```bash
-npx playwright show-report
+npm report:open
 ```
 
 
@@ -110,7 +128,7 @@ npx playwright show-report
 Run ESLint manually:
 
 ```bash
-npx eslint . --ext .ts,.js
+npm lint
 ```
 
 ## CI/CD Pipeline (GitHub Actions)
@@ -120,6 +138,6 @@ The workflow runs:
 1. **Linting**
 2. **UI tests** (Chromium & Firefox)
 3. **API tests**
-4. **Aggregated “All Tests” validation**
+4. **Fulll Tests “All Tests” validation**
 
 Each test group uploads its own HTML report as a GitHub artifact.
