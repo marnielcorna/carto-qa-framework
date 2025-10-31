@@ -24,7 +24,7 @@ export class LoginPage extends BasePage{
         await this.usernameInput.fill(username);
         await this.passwordInput.fill(password);
         await this.submitButton.click();
-        await this.page.waitForURL(this.orgUrl, { timeout: 20000 });
+        await this.page.waitForURL(this.orgUrl, { timeout: 30000 });
 
     }
 }

@@ -26,19 +26,19 @@ export async function buildRequestData(
     console.warn(`================== REQUIRE USER?:: ${scenario.requiresUser}`);
 
     if (scenario.requiresNewUser) {
-        // Create a brand new temporary user
-        console.warn(`🔹 Creating new user for scenario ${scenario.id}`);
+        // Creates new temporary user
+        console.warn(`Creating new user for scenario ${scenario.id}`);
         userId = await session.createUser(username, password, cleanUp);
         console.warn(`THIS USER ID IN NEW USER FLOW:: ${userId}`);
         headers['Authorization'] = `Bearer ${session.token}`;
     } else if (scenario.requiresUser) {
         // Use existing user (from .env)
-        console.warn(`🔹 Using existing user from .env`);
+        console.warn('Using existing user from .env');
         await session.generateToken(Env.API_USER_NAME, Env.API_USER_PASSWORD);
         headers['Authorization'] = `Bearer ${session.token}`;
     } else if (scenario.requiresToken) {
-        // Only generate token without user creation
-        console.warn(`🔹 Generating token only (no user creation)`);
+        // generates token without user creation
+        console.warn('Generating token only (no user creation)');
         await session.generateToken(username, password);
         headers['Authorization'] = `Bearer ${session.token}`;
     }
@@ -75,27 +75,6 @@ export async function buildRequestData(
 
     console.warn(`THIS ENDPOINT:: ${endpoint}`);
     console.warn(`THIS BODY:: ${JSON.stringify(body, null, 2)}`);
-
-    if (body && typeof body === 'object') {
-        const replacePlaceholders = (obj: any) => {
-            for (const key in obj) {
-                if (typeof obj[key] === 'string') {
-                    const original = obj[key];
-                    obj[key] = obj[key]
-                        .replace('{UUID}', userId || 'invalid-user-id')
-                        .replace('{ISBN}', '9781449331818');
-
-                    if (obj[key] !== original) {
-                        console.warn(`Replaced placeholder: ${original} → ${obj[key]}`);
-                    }
-                } else if (typeof obj[key] === 'object') {
-                    replacePlaceholders(obj[key]);
-                }
-            }
-        };
-        replacePlaceholders(body);
-    }
-
 
     return { endpoint, headers, body, username, password, userId };
 }

@@ -41,7 +41,7 @@ export class UserSession {
 
     expect(response.status()).toBe(200);
     this.token = body.token;
-    console.log(`Token generated.`);
+    console.log('Token generated.');
     return this.token!;
   }
 

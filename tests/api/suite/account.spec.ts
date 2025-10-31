@@ -1,4 +1,4 @@
-import { test, expect, request, APIResponse } from '@playwright/test';
+import { test, expect, request } from '@playwright/test';
 import { ApiHelper } from '../utils/apiHelper';
 import { ApiLogger } from '../utils/apiLogger';
 import { UserSession } from '../utils/userSession';
@@ -17,7 +17,7 @@ test.describe('Account API Suite', () => {
   });
 
   test.afterEach(async () => {
-    console.log('Cleaning up after test...');
+    console.log('Cleaning up test.');
     await session.deleteUser();
     await session.dispose();
   });
@@ -28,9 +28,6 @@ test.describe('Account API Suite', () => {
     const runTest = scenario.skip ? test.skip : test;
 
     runTest(`${scenario.id} - ${scenario.description}`, async () => {
-      let userId = '';
-      let token = '';
-
       const context = await request.newContext({
         baseURL: env.baseUrl,
         extraHTTPHeaders: env.headers,
@@ -46,11 +43,8 @@ test.describe('Account API Suite', () => {
 
       const expectedStatus = scenario.expected.status;
       expect(response.status()).toBe(expectedStatus);
-      console.warn(`THIS CURRENT CODE:: ${response.status()}`);
-      console.warn(`THIS EXPECTED CODE:: ${expectedStatus}`);
 
       const json = await response.json().catch(() => ({}));
-      console.warn(`THIS JSON:: ${json}`);
 
       if (scenario.expected.schemaKeys) {
         for (const key of scenario.expected.schemaKeys) {

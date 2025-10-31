@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "npx eslint .",
+    "test:ui": "npx playwright test --project=ui-chromium",
+    "test:api": "npx playwright test --project=api-tests",
+    "test:all": "npm run lint && npx playwright test"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marnielcorna/carto-qa-framework.git"

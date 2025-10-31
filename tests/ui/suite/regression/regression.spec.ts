@@ -13,7 +13,9 @@ for (const scenario of scenarios) {
       console.log(`Starting scenario: ${scenario.metadata.id} - ${scenario.metadata.name}`);
 
       await workflow.open();
+      console.warn('BEFORE EXPECT.:::')
       await expect(page).toHaveURL('https://clausa.app.carto.com/workflows');
+      console.warn('AFTER EXPECT.:::')
 
       await workflow.openNewWorkflow();
       await workflow.openDataBaseList();

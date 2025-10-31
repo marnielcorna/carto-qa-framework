@@ -12,6 +12,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.CARTO_BASE_URL,
     trace: 'on-first-retry',
+    headless: true
   },
   projects: [
     {
