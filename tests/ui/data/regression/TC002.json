@@ -13,9 +13,9 @@
   "nodes": [
     { "type": "source", "name": "retail_stores", "quadrant": 1 },
     { "type": "source", "name": "usa_states_boundaries", "quadrant": 11 },
-    { "type": "component", "name": "Spatial Match", "quadrant": 6 },
-    { "type": "component", "name": "Simple Filter", "quadrant": 8 },
-    { "type": "component", "name": "Create Builder Map", "quadrant": 10 }
+    { "type": "component", "name": "Spatial Match", "quadrant": 4 },
+    { "type": "component", "name": "Simple Filter", "quadrant": 5 },
+    { "type": "component", "name": "Create Builder Map", "quadrant": 6 }
   ],
   "connections": [
     { "type": "source", "from": "retail_stores", "to": "Spatial Match", "targetHandle": "input-0" },

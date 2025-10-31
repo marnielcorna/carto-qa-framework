@@ -46,12 +46,8 @@ export class UserSession {
   }
 
   async deleteUser(): Promise<void> {
-    console.warn("ENTRO DELETE??");
-    console.warn(`this user ID: ${this.userId}`);
-    console.warn(`this token: ${this.token}`);
-    console.warn(`this CLEAN UP: ${this.cleanUp}`);
     if (!this.cleanUp) {
-      console.warn('No Cleaning data')
+      console.warn('No Cleaning data');
       return;
     }
     if (!this.userId || !this.token) {

@@ -17,7 +17,7 @@ test.describe('BookStore API Suite', () => {
   });
 
   test.afterEach(async () => {
-    console.log('Cleaning up test...');
+    console.log('Cleaning up test.');
     await session.deleteUser();
     await session.dispose();
   });

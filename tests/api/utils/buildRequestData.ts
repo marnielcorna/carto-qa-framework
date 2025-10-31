@@ -18,18 +18,10 @@ export async function buildRequestData(
     const cleanUp = scenario.cleanUp;
     let userId = '';
 
-    console.warn(`THIS HEADER:: ${headers}`);
-    console.warn(`THIS USERNAME:: ${username}`);
-    console.warn(`THIS PASSWORD:: ${password}`);
-    console.warn(`THIS REQUIRE USER?:: ${scenario.requiresUser}`);
-    console.warn(`THIS REQUIRE NEW USER?:: ${scenario.requiresNewUser}`);
-    console.warn(`================== REQUIRE USER?:: ${scenario.requiresUser}`);
-
     if (scenario.requiresNewUser) {
         // Creates new temporary user
         console.warn(`Creating new user for scenario ${scenario.id}`);
         userId = await session.createUser(username, password, cleanUp);
-        console.warn(`THIS USER ID IN NEW USER FLOW:: ${userId}`);
         headers['Authorization'] = `Bearer ${session.token}`;
     } else if (scenario.requiresUser) {
         // Use existing user (from .env)
@@ -37,14 +29,12 @@ export async function buildRequestData(
         await session.generateToken(Env.API_USER_NAME, Env.API_USER_PASSWORD);
         headers['Authorization'] = `Bearer ${session.token}`;
     } else if (scenario.requiresToken) {
-        // generates token without user creation
         console.warn('Generating token only (no user creation)');
         await session.generateToken(username, password);
         headers['Authorization'] = `Bearer ${session.token}`;
     }
 
     // Force invalid token if requested
-    console.warn(`THIS SCENARIO AUTH:: ${scenario.auth}`);
     if (scenario.useInvalidToken) {
         headers['Authorization'] = 'Bearer invalid';
     } else if (scenario.auth === 'invalid') {
@@ -60,7 +50,6 @@ export async function buildRequestData(
     }
 
     const endpoint = scenario.endpoint.replace('{UUID}', uuidToUse || 'invalid');
-    console.warn(`============== FINAL ENDPOINT:: ${endpoint}`);
 
     // Build request body
     let body = scenario.body;
@@ -72,9 +61,6 @@ export async function buildRequestData(
     if (!body && endpoint.includes('/Authorized')) {
         body = { userName: Env.API_USER_NAME, password: Env.API_USER_PASSWORD };
     }
-
-    console.warn(`THIS ENDPOINT:: ${endpoint}`);
-    console.warn(`THIS BODY:: ${JSON.stringify(body, null, 2)}`);
 
     return { endpoint, headers, body, username, password, userId };
 }

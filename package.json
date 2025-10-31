@@ -4,10 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "npx eslint .",
-    "test:ui": "npx playwright test --project=ui-chromium",
-    "test:api": "npx playwright test --project=api-tests",
-    "test:all": "npm run lint && npx playwright test"
+    "lint": "eslint . --ext .ts,.js",
+    "test:ui:smoke": "npx playwright test --project=ui-chromium --grep 'smoke'",
+    "test:ui:regression": "npx playwright test --project=ui-chromium --grep 'regression'",
+    "test:ui:create": "npx playwright test --project=ui-chromium --grep 'create'",
+    "test:ui:update": "npx playwright test --project=ui-chromium --grep 'update'",
+    "test:ui:smoke:headed": "npx playwright test --project=ui-chromium --grep 'smoke' --headed --headed",
+    "test:ui:regression:headed": "npx playwright test --project=ui-chromium --grep 'regression' --headed",
+    "test:ui:create:headed": "npx playwright test --project=ui-chromium --grep 'create' --headed",
+    "test:ui:update:headed": "npx playwright test --project=ui-chromium --grep 'update' --headed",
+    "test:api": "npx playwright test --project=api-tests"
   },
   "repository": {
     "type": "git",
