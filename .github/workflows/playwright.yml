@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: "Select what to run (default: api)"
+        description: "Select what to run.."
         required: false
-        default: "api"
+        default: "all"
         type: choice
         options:
           - lint
@@ -28,12 +28,13 @@ jobs:
         with:
           node-version: lts/*
       - run: npm ci
-      - run: npx eslint . --ext .ts,.js
+      - run: eslint . --ext .ts,.js
 
   api-tests:
     name: Run API Tests (default)
     runs-on: ubuntu-latest
     needs: [lint]
+    if: ${{ github.event.inputs.target == 'api' || github.event.inputs.target == 'all' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

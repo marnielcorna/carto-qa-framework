@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { WorkflowPage } from '../../pages/workflows.page';
 import { loadWorkflowScenarios } from '../../utils/scenarioLoader';
+import { Env } from '../../../../config/env';
 
 const scenarios = loadWorkflowScenarios('smoke');
 
@@ -13,7 +14,7 @@ for (const scenario of scenarios) {
       console.log(`Starting scenario: ${scenario.metadata.id} - ${scenario.metadata.name}`);
 
       await workflow.open();
-      await expect(page).toHaveURL(/workflows\/[a-zA-Z0-9_-]+/);
+      await expect(page).toHaveURL(`${Env.CARTO_URL}/workflows`);
       
       await workflow.openNewWorkflow();
       await workflow.openDataBaseList();

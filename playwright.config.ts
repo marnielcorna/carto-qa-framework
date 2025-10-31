@@ -12,6 +12,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.CARTO_BASE_URL,
     trace: 'on-first-retry',
+    headless: true
   },
   projects: [
     {
@@ -40,6 +41,7 @@ export default defineConfig({
     {
       name: 'api-tests',
       testDir: './tests/api',
+      fullyParallel: false,
       use: {
         baseURL: process.env.API_URL,
         extraHTTPHeaders: { 'Content-Type': 'application/json' },

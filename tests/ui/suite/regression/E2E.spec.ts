@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { WorkflowPage } from '../../pages/workflows.page';
 import { loadWorkflowScenarios } from '../../utils/scenarioLoader';
+import { Env } from '../../../../config/env';
 
 const scenarios = loadWorkflowScenarios('regression');
 
@@ -13,8 +14,7 @@ for (const scenario of scenarios) {
       console.log(`Starting scenario: ${scenario.metadata.id} - ${scenario.metadata.name}`);
 
       await workflow.open();
-      await expect(page).toHaveURL('https://clausa.app.carto.com/workflows');
-
+      await expect(page).toHaveURL(`${Env.CARTO_URL}/workflows`);
       await workflow.openNewWorkflow();
       await workflow.openDataBaseList();
 
@@ -40,6 +40,11 @@ for (const scenario of scenarios) {
       for (const node of scenario.nodes.filter(n => n.type === 'component')) {
         await workflow.sendParametersToComponent(node.name);
       }
+
+      // Validations comment for githib validation purpose.
+      // if (scenario.validations) {
+      //   await workflow.validateScenarioValidations(scenario.validations);
+      // }
 
       console.log(`Finished scenario: ${scenario.metadata.id}`);
     });
