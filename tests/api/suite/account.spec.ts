@@ -1,4 +1,5 @@
 import { test, expect, request } from '@playwright/test';
+import { Env } from '../../../config/env';
 import { ApiHelper } from '../utils/apiHelper';
 import { ApiLogger } from '../utils/apiLogger';
 import { UserSession } from '../utils/userSession';
@@ -6,7 +7,7 @@ import { sendApiRequest } from '../utils/sendApiRequest';
 import { buildRequestData } from '../utils/buildRequestData';
 
 const helper = new ApiHelper();
-const env = helper.getEnvConfig();
+const env = Env.API_CONFIG;
 
 test.describe('Account API Suite', () => {
   let session: UserSession;
@@ -34,16 +35,12 @@ test.describe('Account API Suite', () => {
       });
 
       const { endpoint, headers, body } = await buildRequestData(scenario, session);
-
       ApiLogger.logRequest(scenario, env.baseUrl, endpoint, headers, body);
 
       const response = await sendApiRequest(context, scenario.method, endpoint, headers, body);
-
       await ApiLogger.logResponse(response);
 
-      const expectedStatus = scenario.expected.status;
-      expect(response.status()).toBe(expectedStatus);
-
+      expect(response.status()).toBe(scenario.expected.status);
       const json = await response.json().catch(() => ({}));
 
       if (scenario.expected.schemaKeys) {
@@ -51,6 +48,7 @@ test.describe('Account API Suite', () => {
           expect(json).toHaveProperty(key);
         }
       }
+
       console.log(`${scenario.id} - ${scenario.description} passed`);
     });
   }

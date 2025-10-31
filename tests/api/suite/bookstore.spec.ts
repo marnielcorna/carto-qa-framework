@@ -1,4 +1,5 @@
 import { test, expect, request } from '@playwright/test';
+import { Env } from '../../../config/env';
 import { ApiHelper } from '../utils/apiHelper';
 import { ApiLogger } from '../utils/apiLogger';
 import { UserSession } from '../utils/userSession';
@@ -6,7 +7,7 @@ import { sendApiRequest } from '../utils/sendApiRequest';
 import { buildRequestData } from '../utils/buildRequestData';
 
 const helper = new ApiHelper();
-const env = helper.getEnvConfig();
+const env = Env.API_CONFIG;
 
 test.describe('BookStore API Suite', () => {
   let session: UserSession;
@@ -17,12 +18,14 @@ test.describe('BookStore API Suite', () => {
   });
 
   test.afterEach(async () => {
-    console.log('Cleaning up test.');
+    console.log('🧹 Cleaning up test...');
     await session.deleteUser();
     await session.dispose();
   });
 
-  const scenarios = helper.getScenarios().filter((s: { id: string }) => s.id >= 'TC011' && s.id <= 'TC020');
+  const scenarios = helper.getScenarios().filter(
+    (s: { id: string }) => s.id >= 'TC011' && s.id <= 'TC020'
+  );
 
   for (const scenario of scenarios) {
     const runTest = scenario.skip ? test.skip : test;
@@ -37,25 +40,20 @@ test.describe('BookStore API Suite', () => {
 
       ApiLogger.logRequest(scenario, env.baseUrl, endpoint, headers, body);
 
-      // Run request
       const response = await sendApiRequest(context, scenario.method, endpoint, headers, body);
-
-      // Log
       await ApiLogger.logResponse(response);
 
-      // Validation
-      const expectedStatus = scenario.expected.status;
-      expect(response.status()).toBe(expectedStatus);
+      expect(response.status()).toBe(scenario.expected.status);
 
-      // Parsear JSON
       const json = await response.json().catch(() => ({}));
-      console.log(`${scenario.id} - ${scenario.description} passed.`);
 
       if (scenario.expected.schemaKeys) {
         for (const key of scenario.expected.schemaKeys) {
           expect(json).toHaveProperty(key);
         }
       }
+
+      console.log(`${scenario.id} - ${scenario.description} passed.`);
     });
   }
 });

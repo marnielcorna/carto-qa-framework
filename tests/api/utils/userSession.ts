@@ -8,17 +8,16 @@ export class UserSession {
   cleanUp: boolean | null = true;
 
   async init(): Promise<void> {
+    const apiConfig = Env.API_CONFIG;
     this.api = await request.newContext({
-      baseURL: Env.API_URL,
-      extraHTTPHeaders: Env.API_HEADERS,
+      baseURL: apiConfig.baseUrl,
+      extraHTTPHeaders: apiConfig.headers,
     });
   }
 
   async createUser(userName: string, password: string, cleanUp: boolean): Promise<string> {
     this.cleanUp = cleanUp;
-    const response = await this.api.post('/Account/v1/User', {
-      data: { userName, password },
-    });
+    const response = await this.api.post('/Account/v1/User', { data: { userName, password } });
 
     if (response.status() === 201) {
       const body = await response.json();

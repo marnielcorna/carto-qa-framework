@@ -12,21 +12,21 @@ export async function buildRequestData(
     password: string;
     userId: string;
 }> {
-    const headers: Record<string, string> = { ...Env.API_HEADERS };
+    const apiConfig = Env.API_CONFIG;
+    const headers: Record<string, string> = { ...apiConfig.headers };
+
     const username = `acct_user_${Date.now()}`;
-    const password = scenario.invalidPassword ? '111111' : Env.API_USER_PASSWORD;
+    const password = scenario.invalidPassword ? '111111' : apiConfig.userPassword;
     const cleanUp = scenario.cleanUp;
     let userId = '';
 
     if (scenario.requiresNewUser) {
-        // Creates new temporary user
         console.warn(`Creating new user for scenario ${scenario.id}`);
         userId = await session.createUser(username, password, cleanUp);
         headers['Authorization'] = `Bearer ${session.token}`;
     } else if (scenario.requiresUser) {
-        // Use existing user (from .env)
         console.warn('Using existing user from .env');
-        await session.generateToken(Env.API_USER_NAME, Env.API_USER_PASSWORD);
+        await session.generateToken(apiConfig.userName, apiConfig.userPassword);
         headers['Authorization'] = `Bearer ${session.token}`;
     } else if (scenario.requiresToken) {
         console.warn('Generating token only (no user creation)');
@@ -34,16 +34,11 @@ export async function buildRequestData(
         headers['Authorization'] = `Bearer ${session.token}`;
     }
 
-    // Force invalid token if requested
-    if (scenario.useInvalidToken) {
-        headers['Authorization'] = 'Bearer invalid';
-    } else if (scenario.auth === 'invalid') {
+    if (scenario.useInvalidToken || scenario.auth === 'invalid') {
         headers['Authorization'] = 'Bearer invalid';
     }
 
-    // Build endpoint (handle invalid UUID)
     let uuidToUse = userId;
-
     if (scenario.invalidUuid) {
         uuidToUse = 'invalid-user-id';
         console.warn(`Using invalid UUID for scenario ${scenario.id}`);
@@ -51,15 +46,12 @@ export async function buildRequestData(
 
     const endpoint = scenario.endpoint.replace('{UUID}', uuidToUse || 'invalid');
 
-    // Build request body
     let body = scenario.body;
-
     if (!body && endpoint.includes('/User') && scenario.method === 'POST') {
         body = { userName: `acct_user_${Date.now()}`, password };
     }
-
     if (!body && endpoint.includes('/Authorized')) {
-        body = { userName: Env.API_USER_NAME, password: Env.API_USER_PASSWORD };
+        body = { userName: apiConfig.userName, password: apiConfig.userPassword };
     }
 
     return { endpoint, headers, body, username, password, userId };
