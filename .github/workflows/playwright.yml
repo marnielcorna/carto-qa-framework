@@ -44,8 +44,8 @@ jobs:
       - name: Run API tests
         run: npm run test:api
         env:
-          API_URL: ${{ secrets.API_URL }}
-          API_USER_NAME: ${{ secrets.API_USER_NAME }}
+          API_URL: ${{ vars.API_URL }}
+          API_USER_NAME: ${{ vars.API_USER_NAME }}
           API_USER_PASSWORD: ${{ secrets.API_USER_PASSWORD }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       - name: Upload API HTML Report
@@ -73,6 +73,11 @@ jobs:
       - run: npx playwright install --with-deps
       - name: Run UI tests
         run: npm run test:ui:all
+        env:
+          UI_BASE_URL: ${{ vars.UI_BASE_URL }}
+          CARTO_BASE_URL: ${{ vars.CARTO_BASE_URL }}
+          UI_USERNAME: ${{ vars.UI_USERNAME }}
+          UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
       - name: Upload UI HTML Report
         uses: actions/upload-artifact@v4
         if: always()
