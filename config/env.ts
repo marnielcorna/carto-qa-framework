@@ -1,43 +1,35 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
-dotenv.config({
-  path: path.resolve(process.cwd(), '.env'),
-  override: true,
-});
+const envPath = path.resolve(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+} else {
+  console.warn('⚠️ No .env file found. Using system environment variables.');
+}
 
 export class Env {
-  static get API_CONFIG() {
-    return {
-      baseUrl: Env.safeGet('API_URL'),
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      userName: Env.safeGet('API_USER_NAME'),
-      userPassword: Env.safeGet('API_USER_PASSWORD'),
-      testPassword: Env.safeGet('TEST_USER_PASSWORD'),
-    };
-  }
+  public static readonly API_URL = Env.get('API_URL');
+  public static readonly API_USER_NAME = Env.get('API_USER_NAME');
+  public static readonly API_USER_PASSWORD = Env.get('API_USER_PASSWORD');
+  public static readonly TEST_USER_PASSWORD = Env.get('TEST_USER_PASSWORD');
 
-  static get UI_CONFIG() {
-    return {
-      baseUrl: Env.safeGet('UI_BASE_URL', false),
-      cartoUrl: Env.safeGet('CARTO_BASE_URL', false),
-      username: Env.safeGet('UI_USERNAME', false),
-      password: Env.safeGet('UI_PASSWORD', false),
-    };
-  }
+  public static readonly UI_BASE_URL = Env.get('UI_BASE_URL');
+  public static readonly CARTO_BASE_URL = Env.get('CARTO_BASE_URL');
+  public static readonly UI_USERNAME = Env.get('UI_USERNAME');
+  public static readonly UI_PASSWORD = Env.get('UI_PASSWORD');
 
-  private static safeGet(key: string, required = true): string {
+  public static readonly API_HEADERS: Record<string, string> = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  private static get(key: string): string {
     const value = process.env[key];
-    if (!value) {
-      if (required) {
-        throw new Error(`Environment variable ${key} is not set correctly`);
-      } else {
-        console.warn(`Optional environment variable ${key} not found`);
-        return '';
-      }
+    if (!value || value.trim() === '') {
+      console.warn(`Environment variable "${key}" is not found`);
+      return '';
     }
     return value;
   }

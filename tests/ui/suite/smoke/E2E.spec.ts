@@ -4,7 +4,7 @@ import { loadWorkflowScenarios } from '../../utils/scenarioLoader';
 import { Env } from '../../../../config/env';
 
 const scenarios = loadWorkflowScenarios('smoke');
-const uiConfig = Env.UI_CONFIG;
+const baseURL = Env.CARTO_BASE_URL;
 
 for (const scenario of scenarios) {
   test.describe(`${scenario.metadata.id} - ${scenario.metadata.name}`, () => {
@@ -14,7 +14,7 @@ for (const scenario of scenarios) {
       console.log(`Starting scenario: ${scenario.metadata.id} - ${scenario.metadata.name}`);
 
       await workflow.open();
-      await expect(page).toHaveURL(`${uiConfig.cartoUrl}/workflows`);
+      await expect(page).toHaveURL(`${baseURL}/workflows`);
 
       await workflow.openNewWorkflow();
       await workflow.openDataBaseList();

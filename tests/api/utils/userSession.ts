@@ -1,17 +1,17 @@
 import { request, APIRequestContext, expect } from '@playwright/test';
-import { Env } from '../../../config/env';
+import { ApiHelper } from './apiHelper';
 
 export class UserSession {
   private api!: APIRequestContext;
   userId: string | null = null;
   token: string | null = null;
   cleanUp: boolean | null = true;
+  private helper = new ApiHelper();
 
   async init(): Promise<void> {
-    const apiConfig = Env.API_CONFIG;
     this.api = await request.newContext({
-      baseURL: apiConfig.baseUrl,
-      extraHTTPHeaders: apiConfig.headers,
+      baseURL: this.helper.getBaseUrl(),
+      extraHTTPHeaders: this.helper.getHeaders(),
     });
   }
 

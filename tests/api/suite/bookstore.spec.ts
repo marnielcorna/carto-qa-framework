@@ -1,5 +1,4 @@
 import { test, expect, request } from '@playwright/test';
-import { Env } from '../../../config/env';
 import { ApiHelper } from '../utils/apiHelper';
 import { ApiLogger } from '../utils/apiLogger';
 import { UserSession } from '../utils/userSession';
@@ -7,7 +6,6 @@ import { sendApiRequest } from '../utils/sendApiRequest';
 import { buildRequestData } from '../utils/buildRequestData';
 
 const helper = new ApiHelper();
-const env = Env.API_CONFIG;
 
 test.describe('BookStore API Suite', () => {
   let session: UserSession;
@@ -18,7 +16,7 @@ test.describe('BookStore API Suite', () => {
   });
 
   test.afterEach(async () => {
-    console.log('🧹 Cleaning up test...');
+    console.log('Cleaning up test.');
     await session.deleteUser();
     await session.dispose();
   });
@@ -31,16 +29,19 @@ test.describe('BookStore API Suite', () => {
     const runTest = scenario.skip ? test.skip : test;
 
     runTest(`${scenario.id} - ${scenario.description}`, async () => {
+      const baseUrl = helper.getBaseUrl();
+      const headers = helper.getHeaders();
+
       const context = await request.newContext({
-        baseURL: env.baseUrl,
-        extraHTTPHeaders: env.headers,
+        baseURL: baseUrl,
+        extraHTTPHeaders: headers,
       });
 
-      const { endpoint, headers, body } = await buildRequestData(scenario, session);
+      const { endpoint, headers: reqHeaders, body } = await buildRequestData(scenario, session);
 
-      ApiLogger.logRequest(scenario, env.baseUrl, endpoint, headers, body);
+      ApiLogger.logRequest(scenario, baseUrl, endpoint, reqHeaders, body);
 
-      const response = await sendApiRequest(context, scenario.method, endpoint, headers, body);
+      const response = await sendApiRequest(context, scenario.method, endpoint, reqHeaders, body);
       await ApiLogger.logResponse(response);
 
       expect(response.status()).toBe(scenario.expected.status);

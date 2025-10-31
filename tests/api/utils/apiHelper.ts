@@ -20,12 +20,27 @@ export class ApiHelper {
     return this.testData.scenarios;
   }
 
-  getEnvConfig() {
-    return Env.API_CONFIG;
+  getScenario(id: string) {
+    return this.getScenarios().find((s: { id: string }) => s.id === id);
   }
 
-  getScenario(id: string) {
-  return this.getScenarios().find((s: { id: string }) => s.id === id);
-}
+  getBaseUrl(): string {
+    return Env.API_URL;
+  }
 
+  getHeaders(): Record<string, string> {
+    return Env.API_HEADERS;
+  }
+
+  getUserName(): string {
+    return Env.API_USER_NAME;
+  }
+
+  getPassword(): string {
+    return Env.API_USER_PASSWORD;
+  }
+
+  getTestPassword(): string {
+    return Env.TEST_USER_PASSWORD;
+  }
 }

@@ -10,14 +10,15 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
+
     this.usernameInput = page.locator('//*[@id="username"]');
     this.passwordInput = page.locator('//*[@id="password"]');
     this.submitButton = page.locator('//button[contains(text(), "Continue")]');
-    this.orgUrl = Env.UI_CONFIG.cartoUrl;
+    this.orgUrl = Env.CARTO_BASE_URL;
   }
 
   async open() {
-    await super.open(Env.UI_CONFIG.baseUrl);
+    await super.open(Env.UI_BASE_URL);
   }
 
   async login(username: string, password: string) {
