@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: lts/*
       - run: npm ci
-      - run: npx eslint .
+      - run: eslint . --ext .ts,.js
 
   api-tests:
     name: Run API Tests (default)
