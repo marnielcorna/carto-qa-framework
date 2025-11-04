@@ -6,7 +6,7 @@ const envPath = path.resolve(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
   dotenv.config({ path: envPath });
 } else {
-  console.warn('⚠️ No .env file found. Using system environment variables.');
+  console.warn('No .env file found. Using system environment variables.');
 }
 
 export class Env {
